@@ -1,0 +1,25 @@
+[
+    {
+       "id":"Link21",
+       "type":"Straight",
+       "sourcePoint":{
+          "x":0,
+          "y":0
+       },
+       "targetPoint":{
+          "x":60,
+          "y":60
+       },
+       "targetDecorator":{
+          "shape":"Arrow",
+          "style":{
+             "strokeColor":"#757575",
+             "fill":"#757575"
+          }
+       },
+       "style":{
+          "strokeWidth":1,
+          "strokeColor":"#757575"
+       }
+    }
+ ]
