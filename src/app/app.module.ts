@@ -19,11 +19,12 @@ import { WorkflowModule } from './workflow/workflow.module';
 import { KeycloakService, KeycloakAngularModule } from 'keycloak-angular';
 import { initializer } from './utils/app-init';
 import { KeycloakHttpInterceptorService } from './workflow/service/keycloak-http-interceptor.service';
+import { UserListComponent } from './users/user-list/user-list.component';
+import { UserModule } from './users/user.module';
 
 
 @NgModule({
   imports: [
-   
     KeycloakAngularModule,
     BrowserAnimationsModule,
     FormsModule,
@@ -31,15 +32,14 @@ import { KeycloakHttpInterceptorService } from './workflow/service/keycloak-http
     HttpClientModule,
     ComponentsModule,
     WorkflowModule,
+    UserModule,
     RouterModule,
-    AppRoutingModule,
-    AgmCoreModule.forRoot({
-      apiKey: 'YOUR_GOOGLE_MAPS_API_KEY'
-    })
+    AppRoutingModule 
   ],
   declarations: [
     AppComponent,
     AdminLayoutComponent,
+    
 
   ],  providers: [
     { 

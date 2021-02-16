@@ -11,7 +11,7 @@ export const ROUTES: RouteInfo[] = [
     { path: '/workflow', title: 'Workflow',  icon: 'dashboard', class: '' },
     { path: '/workflow-list', title: 'Workflow-list',  icon: 'dashboard', class: '' },
     { path: '/workflow-responce', title: 'Workflow Responce',  icon: 'dashboard', class: '' },
-
+    { path: '/user-list', title: 'User list',  icon: 'users', class: '' }
     
 ];
 

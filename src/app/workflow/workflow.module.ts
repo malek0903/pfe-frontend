@@ -55,7 +55,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer'
   ],
   imports: [
     PdfViewerModule,
-    VgCoreModule,
+    VgCoreModule,   
     VgControlsModule,
     VgOverlayPlayModule,
     VgBufferingModule,

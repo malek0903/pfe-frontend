@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { AnnotationConstraints, Connector, ConnectorConstraints, ConnectorModel, Diagram, DiagramComponent, DiagramConstraints, FlowShapeModel, IBlazorClickEventArgs, IClickEventArgs, ICollectionChangeEventArgs, IConnectionChangeEventArgs, IDoubleClickEventArgs, IDragEnterEventArgs, IDropEventArgs, MarginModel, NodeModel, OrthogonalSegmentModel, PaletteModel, PointModel, PointPortModel, SnapSettingsModel, StrokeStyleModel, SymbolInfo, TextStyleModel } from '@syncfusion/ej2-angular-diagrams';
-import { ComponentDto } from '../models/ComponentDto';
+import { WorkflowDto } from '../models/WorkflowDto';
 import { WorkflowService } from '../service/workflow.service';
 import { ExpandMode } from '@syncfusion/ej2-navigations';
 import { paletteIconClick } from '../script/diagram-common';
@@ -11,6 +11,8 @@ import { KeycloakService } from 'keycloak-angular';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FileUploadService } from '../service/file-upload.service';
+import { ComponentDto } from '../models/ComponentDto';
+import { UserDto } from '../models/UserDto';
 @Component({
   selector: 'app-workflow-generator',
   templateUrl: './workflow-generator.component.html',
@@ -21,7 +23,9 @@ export class WorkflowGeneratorComponent implements OnInit {
   @ViewChild('diagram')
   //Diagram Properties
   public diagram: DiagramComponent;
-  public shape: ComponentDto[] = new Array;
+  public components: ComponentDto[] = new Array;
+  public users: UserDto[] = new Array;
+  public workflow: WorkflowDto
   validatingForm: FormGroup;
   closeResult = '';
   componentName = "";
@@ -122,23 +126,31 @@ export class WorkflowGeneratorComponent implements OnInit {
   /*************************Begin specific methods */
 
   saveWorkflow() {
-    this.shape.forEach(element => {
-      element.idUser = 1
-      element.idWorkflow = 1
-      this.workflowSevice.createWorflow(element)
-        .subscribe();
-    });
+
+    this.workflow.component = this.components;
+    this.workflow.users = this.users;
+    this.workflow.name = "workflow Test"
+    this.workflowSevice.createWorflow(this.workflow)
+      .subscribe();
+
   }
 
   //drop event
   public drop(args, content): void {
-    this.open(content)
-    this.componentName = args.element.properties.id
+    let test: String = args.element.properties.id
+    if (!test.startsWith("Link")) {
+      this.open(content)
+      let shapeCompo: ComponentDto = new ComponentDto
+      shapeCompo.sourceId = args.element.properties.id
+      this.components.push(shapeCompo);
+
+    }
     // console.log("this is dra", args);
   }
 
   onClick(event, content) {
-    if (event.element.id) {
+    let test: String = event.element.id
+    if (event.element.id && !test.startsWith("Link") ){
       this.open(content);
       this.componentName = event.element.id;
       if (!event.MouseEvent)
@@ -146,34 +158,35 @@ export class WorkflowGeneratorComponent implements OnInit {
     }
     //console.log(event.element.id)
   }
-/*******************************************Start upload file  */
-onChange(event) { 
-  this.file = event.target.files[0]; 
-} 
+  /*******************************************Start upload file  */
+  onChange(event) {
+    this.file = event.target.files[0];
+  }
 
-// OnClick of button Upload 
-onUpload() { 
-  this.loading = !this.loading; 
-  console.log(this.file); 
-  this.fileUploadService.upload(this.file).subscribe( 
-      (event: any) => { 
-          if (typeof (event) === 'object') { 
-              // Short link via api response 
-              this.shortLink = event.link; 
-              this.loading = false; // Flag variable  
-          } 
-      } 
-  ); 
-} 
-//////////
+  // OnClick of button Upload 
+  onUpload() {
+    this.loading = !this.loading;
+    console.log(this.file);
+    this.fileUploadService.upload(this.file).subscribe(
+      (event: any) => {
+        if (typeof (event) === 'object') {
+          // Short link via api response 
+          this.shortLink = event.link;
+          this.loading = false; // Flag variable  
+        }
+      }
+    );
+  }
+  //////////
   public connectionChange(args: IConnectionChangeEventArgs): void {
     if (args.state === 'Changed') {
       let connector = args.connector;
       if (connector.targetID != "" && connector.sourceID != "") {
-        let shapeCompo: ComponentDto = new ComponentDto
-        shapeCompo.name = connector.sourceID;
-        shapeCompo.reportingDestination = connector.targetID
-        this.shape.push(shapeCompo)
+        let found = this.components.find(item => item.sourceId == connector.sourceID)
+        found.link = "localhost"
+        found.destinationId = connector.targetID
+        this.components.push(found)
+        console.log(this.components);
       }
     }
   }

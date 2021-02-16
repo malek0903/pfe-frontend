@@ -1,6 +1,8 @@
-export class ComponentDto {
-    idUser: number
-    idWorkflow : number
-    name : string 
-    reportingDestination : string
+export class ComponentDto{
+    name
+    sourceId?
+    destinationId
+    link
+    type
+    
 }
